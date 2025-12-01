@@ -1,0 +1,30 @@
+[project]
+name = "procurement-assistant"
+version = "0.1.0"
+description = "RAG + Agentic AI Procurement Assistant"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "streamlit>=1.40.0",
+    "chromadb>=0.5.0",
+    "minio>=7.2.0",
+    "pandas>=2.2.0",
+    "plotly>=5.24.0",
+    "ollama>=0.4.0",
+    "pydantic>=2.9.0",
+    "loguru>=0.7.0",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.32.0",
+    "python-multipart>=0.0.17",
+    "llama-index>=0.10.0",
+    "llama-index-llms-ollama>=0.1.0",
+    "llama-index-embeddings-ollama>=0.1.0",
+    "llama-index-vector-stores-chroma>=0.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend", "ui"]
