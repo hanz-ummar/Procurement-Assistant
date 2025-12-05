@@ -61,14 +61,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
     
-    - name: Install dependencies (Bypassing Build System)
+    - name: Install dependencies (Standard Method)
       run: |
         python -m pip install --upgrade pip
-        # Parse dependencies from pyproject.toml and install them directly
-        # utilizing Python's built-in tomllib (available in Python 3.11+)
-        python -c "import tomllib, subprocess, sys; f=open('pyproject.toml','rb'); d=tomllib.load(f); deps=d['project']['dependencies']; subprocess.check_call([sys.executable, '-m', 'pip', 'install'] + deps)"
-        # Install test dependencies explicitly 
-        pip install pytest pytest-cov pytest-asyncio pytest-timeout pytest-mock requests
+        pip install -r requirements.txt
 
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
