@@ -12,120 +12,331 @@ from ui.tabs import (
     render_po_automation, render_compliance_policy
 )
 
-st.set_page_config(page_title="Procurement Assistant", layout="wide")
+# Page Configuration with Custom Theme
+st.set_page_config(
+    page_title="Procurement Assistant AI",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/hanz-ummar/Procurement-Assistant',
+        'Report a bug': 'https://github.com/hanz-ummar/Procurement-Assistant/issues',
+        'About': '## Procurement Assistant AI\n\nAdvanced AI-powered procurement analytics with 9 specialized agents.'
+    }
+)
+
+# Custom CSS for Professional Look
+st.markdown("""
+    <style>
+    /* Main Theme Colors */
+    :root {
+        --primary-color: #1f77b4;
+        --secondary-color: #ff7f0e;
+        --background-color: #0e1117;
+        --secondary-background: #262730;
+    }
+    
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1e3a5f 0%, #0e1117 100%);
+        padding: 1rem 0.5rem;
+    }
+    
+    [data-testid="stSidebar"] .block-container {
+        padding-top: 1rem;
+    }
+    
+    /* Sidebar Headers */
+    [data-testid="stSidebar"] h1 {
+        font-size: 1.5rem !important;
+        font-weight: 700;
+        color: #ffffff;
+        padding: 0.5rem 0;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+        font-size: 1.1rem !important;
+        color: #cccccc;
+        margin-top: 1rem;
+    }
+    
+    /* Buttons in Sidebar */
+    [data-testid="stSidebar"] button {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    [data-testid="stSidebar"] button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* File Uploader Styling */
+    [data-testid="stFileUploader"] {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Main Title */
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(120deg, #1f77b4, #ff7f0e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Tabs */
+    [data-testid="stTabs"] {
+        background: transparent;
+    }
+    
+    [data-testid="stTabs"] button {
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        padding: 0.75rem 1.5rem !important;
+    }
+    
+    [data-testid="stTabs"] button[aria-selected="true"] {
+        background: linear-gradient(120deg, #1f77b4, #0066cc) !important;
+        border-radius: 8px 8px 0 0 !important;
+    }
+    
+    /* Cards and Containers */
+    [data-testid="stExpander"] {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Metrics */
+    [data-testid="stMetricValue"] {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    /* Success/Error Messages */
+    .stSuccess, .stError, .stWarning, .stInfo {
+        border-radius: 10px;
+        padding: 1rem;
+        font-weight: 500;
+    }
+    
+    /* Chat Interface */
+    [data-testid="stChatMessage"] {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    /* Progress Bars */
+    .stProgress > div > div {
+        border-radius: 10px;
+        background: linear-gradient(90deg, #1f77b4, #ff7f0e);
+    }
+    
+    /* Dividers */
+    hr {
+        margin: 1.5rem 0;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Select boxes and inputs */
+    [data-testid="stSelectbox"], [data-testid="stTextInput"] {
+        border-radius: 8px;
+    }
+    
+    /* Status indicators */
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0.25rem;
+    }
+    
+    .status-active {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4CAF50;
+        border: 1px solid #4CAF50;
+    }
+    
+    .status-pending {
+        background: rgba(255, 152, 0, 0.2);
+        color: #FF9800;
+        border: 1px solid #FF9800;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Initialize Session State
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "df" not in st.session_state:
     st.session_state.df = None
+if "analysis_running" not in st.session_state:
+    st.session_state.analysis_running = False
 
 from backend.database import MinioClient
 import io
 
-# Sidebar - File Upload & Selection
+# ============================================
+# PROFESSIONAL SIDEBAR
+# ============================================
 with st.sidebar:
-    st.title("📂 Data Management")
+    # Logo and Title Section
+    st.markdown("# 🤖 Procurement AI")
+    st.caption("Advanced Analytics Platform")
+    st.divider()
     
-    # Mode Selection
-    mode = st.radio("Source", ["Upload New File", "Select Existing File"])
+    # System Status Section
+    st.markdown("### 📊 System Status")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.session_state.df is not None:
+            st.markdown('<span class="status-badge status-active">● Active</span>', unsafe_allow_html=True)
+        else:
+            st.markdown('<span class="status-badge status-pending">○ Idle</span>', unsafe_allow_html=True)
+    with col2:
+        data_rows = len(st.session_state.df) if st.session_state.df is not None else 0
+        st.metric("Records", f"{data_rows:,}", label_visibility="collapsed")
+    
+    st.divider()
+    
+    # Data Source Section
+    st.markdown("### 📁 Data Source")
+    
+    # Modern Tab-like Radio Buttons
+    mode = st.radio(
+        "Select Input Method",
+        ["📤 Upload New", "📂 Load Existing"],
+        label_visibility="collapsed",
+        horizontal=False
+    )
+    
+    st.markdown("")  # Spacer
     
     selected_file_content = None
     selected_file_name = None
     
-    if mode == "Upload New File":
-        uploaded_file = st.file_uploader("Upload Procurement CSV", type=["csv"])
+    if mode == "📤 Upload New":
+        # Upload Section with Better UX
+        st.markdown("##### Upload Procurement Data")
+        uploaded_file = st.file_uploader(
+            "Drag and drop CSV file here",
+            type=["csv"],
+            help="Upload your procurement CSV file for analysis",
+            label_visibility="collapsed"
+        )
+        
         if uploaded_file:
             selected_file_name = uploaded_file.name
             selected_file_content = uploaded_file.getvalue()
             
-            if st.button("Process & Ingest"):
-                progress_bar = st.progress(0, text="Starting ingestion...")
+            # File Info
+            file_size = len(selected_file_content) / 1024  # KB
+            st.success(f"✓ **{selected_file_name}**  \n📦 {file_size:.1f} KB")
+            
+            st.markdown("")
+            if st.button("🚀 Process & Analyze", type="primary", width="stretch"):
+                progress_bar = st.progress(0, text="🔄 Initializing...")
                 def update_progress(p, text):
-                    progress_bar.progress(p, text=text)
+                    progress_bar.progress(p, text=f"🔄 {text}")
 
-                with st.spinner("Ingesting and analyzing data..."):
+                with st.spinner("Processing your data..."):
                     agent = DataPreprocessingAgent()
                     success, message = agent.process_csv(selected_file_content, selected_file_name, progress_callback=update_progress)
                     
                     if success:
-                        st.success(message)
+                        st.success(f"✅ {message}")
                         st.session_state.df = pd.read_csv(io.BytesIO(selected_file_content))
+                        st.balloons()
                     else:
-                        st.error(message)
+                        st.error(f"❌ {message}")
 
-    else: # Select Existing File
+    else:  # Load Existing
+        st.markdown("##### Available Files")
         minio_client = MinioClient()
         files = minio_client.list_files()
         
         if files:
-            selected_file_name = st.selectbox("Select a file", files)
+            selected_file_name = st.selectbox(
+                "Choose a file",
+                files,
+                label_visibility="collapsed",
+                help="Select from previously uploaded files"
+            )
             
-            if st.button("Load File", width="stretch"):
-                with st.spinner("Loading data..."):
-                    content = minio_client.get_file_content(selected_file_name)
-                    if content:
-                        st.session_state.df = pd.read_csv(io.BytesIO(content))
-                        st.success(f"Loaded {selected_file_name}")
-                    else:
-                        st.error("Failed to load file content.")
-            
-            # Use an expander for destructive actions to keep UI clean
-            with st.expander("🗑️ Manage File", expanded=False):
-                if st.button("Delete File", type="primary", width="stretch"):
-                    with st.spinner("Deleting file..."):
-                        # Delete from MinIO
-                        minio_success = minio_client.delete_file(selected_file_name)
-                        
-                        # Delete from ChromaDB
-                        try:
-                            import chromadb
-                            from backend.config import Config
-                            client = chromadb.HttpClient(host=Config.CHROMA_HOST, port=Config.CHROMA_PORT)
-                            collection = client.get_collection("procurement_data")
-                            # Delete where source == selected_file_name
-                            collection.delete(where={"source": selected_file_name})
-                            chroma_success = True
-                        except Exception as e:
-                            st.error(f"ChromaDB Error: {e}")
-                            chroma_success = False
-                        
-                        if minio_success and chroma_success:
-                            st.success(f"Deleted {selected_file_name}")
+            st.markdown("")
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                if st.button("📥 Load Data", width="stretch", type="primary"):
+                    with st.spinner("📂 Loading..."):
+                        content = minio_client.get_file_content(selected_file_name)
+                        if content:
+                            st.session_state.df = pd.read_csv(io.BytesIO(content))
+                            st.success(f"✅ Loaded successfully!")
                             st.rerun()
                         else:
-                            st.error("Failed to delete file.")
+                            st.error("❌ Failed to load file")
+            
+            with col2:
+                # Delete in expander
+                with st.expander("🗑️"):
+                    if st.button("Delete", type="secondary", width="stretch", help="Delete this file"):
+                        with st.spinner("Deleting..."):
+                            # Delete from MinIO
+                            minio_success = minio_client.delete_file(selected_file_name)
+                            
+                            # Delete from ChromaDB
+                            try:
+                                import chromadb
+                                from backend.config import Config
+                                client = chromadb.HttpClient(host=Config.CHROMA_HOST, port=Config.CHROMA_PORT)
+                                collection = client.get_collection("procurement_data")
+                                collection.delete(where={"source": selected_file_name})
+                                chroma_success = True
+                            except Exception as e:
+                                st.error(f"ChromaDB: {e}")
+                                chroma_success = False
+                            
+                            if minio_success and chroma_success:
+                                st.success("✅ Deleted!")
+                                st.rerun()
+                            else:
+                                st.error("❌ Delete failed")
         else:
-            st.info("No files found in storage.")
-
+            st.info("📭 No files available  \nUpload your first file to get started!")
+    
     st.divider()
     
-    # Advanced Options Expander
-    with st.expander("⚙️ Advanced Options", expanded=False):
-        if st.button("Clear Dashboard", width="stretch"):
-            st.session_state.df = None
-            st.session_state.messages = []
-            # Clear specific report keys
-            keys_to_clear = [
-                "spend_report", "risk_report", "supplier_report", 
-                "contract_report", "po_report", "compliance_report", 
-                "exec_summary_report"
-            ]
-            for key in keys_to_clear:
-                if key in st.session_state:
-                    del st.session_state[key]
-            st.rerun()
-
-    st.divider()
-    
-    # Run All Analysis Button
+    # Analysis Control Section
     if st.session_state.df is not None:
-        if st.button("🚀 Run All Analysis", type="primary"):
+        st.markdown("### 🎯 Analysis Control")
+        
+        # Big Analysis Button
+        if st.button(
+            "⚡ Run Complete Analysis",
+            type="primary",
+            width="stretch",
+            help="Execute all 6 AI agents in parallel"
+        ):
             import concurrent.futures
             import time
             
+            st.session_state.analysis_running = True
             start_time = time.time()
-            with st.spinner("Running comprehensive analysis..."):
+            
+            with st.spinner("🤖 AI Agents Working..."):
                 # Initialize Agents
                 agents = {
                     "spend": SpendAnalysisAgent(),
@@ -136,7 +347,7 @@ with st.sidebar:
                     "compliance": CompliancePolicyAgent()
                 }
                 
-                # Define tasks with their specific queries
+                # Define tasks
                 tasks = {
                     "spend": ("Analyze spend patterns, identifying anomalies and opportunities.", agents["spend"]),
                     "risk": ("Identify high-risk suppliers and potential supply chain disruptions.", agents["risk"]),
@@ -155,7 +366,7 @@ with st.sidebar:
                 def run_agent_task(key, query, agent):
                     return key, agent.run(query)
 
-                # Execute in parallel (Reduced to 2 workers for stability)
+                # Execute in parallel
                 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
                     future_to_task = {
                         executor.submit(run_agent_task, key, query, agent): key 
@@ -168,9 +379,9 @@ with st.sidebar:
                         completed_count += 1
                         progress = completed_count / total_tasks
                         progress_bar.progress(progress)
-                        status_text.text(f"Completed {completed_count}/{total_tasks} analyses... (Finished: {key.title()})")
+                        status_text.text(f"✓ {completed_count}/{total_tasks} • {key.title()} Complete")
 
-                # Store results in session state
+                # Store results
                 st.session_state.spend_report = results["spend"]
                 st.session_state.risk_report = results["risk"]
                 st.session_state.supplier_report = results["supplier"]
@@ -178,28 +389,73 @@ with st.sidebar:
                 st.session_state.po_report = results["po"]
                 st.session_state.compliance_report = results["compliance"]
                 
-                # Generate Executive Summary from Spend and Risk insights
+                # Executive Summary
                 st.session_state.exec_summary_report = f"### Financial Overview\n{st.session_state.spend_report}\n\n### Risk Overview\n{st.session_state.risk_report}"
                 
                 end_time = time.time()
                 duration = end_time - start_time
-                hours, rem = divmod(duration, 3600)
-                minutes, seconds = divmod(rem, 60)
-                time_str = f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
+                minutes, seconds = divmod(duration, 60)
                 
                 status_text.empty()
                 progress_bar.empty()
-                st.success("All analyses completed successfully!")
-                print(f"Total Analysis Time: {time_str}")
+                st.success(f"✅ Analysis Complete! ({int(minutes)}m {int(seconds)}s)")
+                st.balloons()
+                st.session_state.analysis_running = False
+        
+        st.divider()
+    
+    # Settings Section
+    with st.expander("⚙️ Settings & Tools", expanded=False):
+        st.markdown("##### Quick Actions")
+        
+        if st.button("🔄 Refresh Data", width="stretch"):
+            st.rerun()
+        
+        if st.button("🗑️ Clear All", width="stretch", type="secondary"):
+            st.session_state.df = None
+            st.session_state.messages = []
+            keys_to_clear = [
+                "spend_report", "risk_report", "supplier_report", 
+                "contract_report", "po_report", "compliance_report", 
+                "exec_summary_report"
+            ]
+            for key in keys_to_clear:
+                if key in st.session_state:
+                    del st.session_state[key]
+            st.success("✅ Dashboard cleared!")
+            st.rerun()
+    
+    st.divider()
+    
+    # Footer
+    st.markdown("""
+        <div style='text-align: center; color: #666; font-size: 0.75rem; padding: 1rem 0;'>
+            <p style='margin: 0;'><strong>Procurement Assistant AI</strong></p>
+            <p style='margin: 0.25rem 0;'>v2.0 • Enterprise Edition</p>
+            <p style='margin: 0.25rem 0;'>Powered by Llama 3.2 & RAG</p>
+        </div>
+    """, unsafe_allow_html=True)
 
-# Main Content
-st.title(" Procurement Assistant ")
+# ============================================
+# MAIN CONTENT AREA
+# ============================================
+
+# Header with Subtitle
+st.markdown("# 🚀 Procurement Assistant AI")
+st.markdown("**Enterprise Analytics Platform** • Real-time Insights • AI-Powered Decision Making")
+st.divider()
 
 if st.session_state.df is not None:
+    # Enhanced Tab Interface
     tabs = st.tabs([
-        "Executive Summary", "Dashboard", "Supplier Intelligence", 
-        "Spend Analysis", "Risk & Alerts", "PO Insights", 
-        "Contract Intelligence", "Compliance & Policy"
+        "📊 Executive Summary",
+        "📈 Dashboard", 
+        "🏢 Suppliers",
+        "💰 Spend Analysis",
+        "⚠️ Risk & Alerts",
+        "📦 PO Insights",
+        "📄 Contracts",
+        "✅ Compliance"
     ])
     
     with tabs[0]:
@@ -220,37 +476,62 @@ if st.session_state.df is not None:
         render_compliance_policy(st.session_state.df)
 
 else:
-    st.info("Please upload a CSV file to get started.")
+    # Welcome Screen with Better Design
+    st.markdown("")
+    st.markdown("")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("""
+            <div style='text-align: center; padding: 3rem 0;'>
+                <h2 style='color: #1f77b4; font-size: 2rem;'>👋 Welcome to Procurement Assistant AI</h2>
+                <p style='font-size: 1.2rem; color: #666; margin: 1rem 0;'>
+                    Your intelligent procurement analytics platform powered by AI
+                </p>
+                <div style='background: rgba(31, 119, 180, 0.1); padding: 2rem; border-radius: 15px; margin: 2rem 0;'>
+                    <h3 style='color: #1f77b4;'>🚀 Get Started</h3>
+                    <p style='font-size: 1rem; line-height: 1.6;'>
+                        Upload your procurement CSV file using the sidebar to unlock:<br><br>
+                        ✓ Real-time analytics<br>
+                        ✓ AI-powered insights<br>
+                        ✓ Risk detection<br>
+                        ✓ Supplier intelligence<br>
+                        ✓ Compliance monitoring
+                    </p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
 
-# Chatbot Interface (Persistent at bottom)
+# ============================================
+# CHAT INTERFACE (Modern Design)
+# ============================================
 @st.fragment
 def render_chat_interface():
     st.divider()
-    st.subheader("💬 AI Assistant")
+    st.markdown("### 💬 AI Assistant")
+    st.caption("Ask questions about your procurement data")
 
-    # Container for chat history and new messages
+    # Chat History
     chat_container = st.container()
-
     with chat_container:
         for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
+            with st.chat_message(message["role"], avatar="🤖" if message["role"] == "assistant" else "👤"):
                 st.markdown(message["content"])
 
-    if prompt := st.chat_input("Ask about your procurement data..."):
+    # Chat Input
+    if prompt := st.chat_input("💭 Ask about your procurement data...", key="chat_input"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         
         with chat_container:
-            with st.chat_message("user"):
+            with st.chat_message("user", avatar="👤"):
                 st.markdown(prompt)
 
-            with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
+            with st.chat_message("assistant", avatar="🤖"):
+                with st.spinner("🤔 Analyzing..."):
                     class GeneralAssistant(BaseDeepAgent):
                         def __init__(self):
                             super().__init__("General Assistant", "Helpful assistant for procurement queries.")
                         
                         def run(self, query: str) -> str:
-                            # Load project context from README.md
                             project_context = "Procurement Assistant Application"
                             try:
                                 with open("README.md", "r", encoding="utf-8") as f:
