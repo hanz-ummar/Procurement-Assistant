@@ -3,7 +3,7 @@ name = "procurement-assistant"
 version = "0.1.0"
 description = "RAG + Agentic AI Procurement Assistant"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "streamlit>=1.40.0",
     "chromadb>=0.5.0",
