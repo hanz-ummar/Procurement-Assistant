@@ -1,8 +1,8 @@
 # Procurement Assistant AI 🤖
 
-[![Tests](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/tests.yml/badge.svg)](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/tests.yml)
-[![Code Quality](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/code-quality.yml/badge.svg)](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/code-quality.yml)
-[![codecov](https://codecov.io/gh/YOUR_USERNAME/Procurement-Assistant/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/Procurement-Assistant)
+[![Tests](https://github.com/hanz-ummar/Procurement-Assistant/actions/workflows/tests.yml/badge.svg)](https://github.com/hanz-ummar/Procurement-Assistant/actions/workflows/tests.yml)
+[![Code Quality](https://github.com/hanz-ummar/Procurement-Assistant/actions/workflows/code-quality.yml/badge.svg)](https://github.com/hanz-ummar/Procurement-Assistant/actions/workflows/code-quality.yml)
+[![codecov](https://codecov.io/gh/hanz-ummar/Procurement-Assistant/branch/main/graph/badge.svg)](https://codecov.io/gh/hanz-ummar/Procurement-Assistant)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
