@@ -63,13 +63,9 @@ jobs:
     
     - name: Install dependencies
       run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-        
-    - name: Install project dependencies
-      run: |
-        $HOME/.cargo/bin/uv pip install --system -e .
-        $HOME/.cargo/bin/uv pip install --system pytest pytest-cov pytest-asyncio pytest-timeout pytest-mock requests
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install pytest pytest-cov pytest-asyncio pytest-timeout pytest-mock requests
     
     - name: Wait for services to be ready
       run: |
