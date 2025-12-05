@@ -61,7 +61,7 @@ with st.sidebar:
         if files:
             selected_file_name = st.selectbox("Select a file", files)
             
-            if st.button("Load File", use_container_width=True):
+            if st.button("Load File", width="stretch"):
                 with st.spinner("Loading data..."):
                     content = minio_client.get_file_content(selected_file_name)
                     if content:
@@ -72,7 +72,7 @@ with st.sidebar:
             
             # Use an expander for destructive actions to keep UI clean
             with st.expander("🗑️ Manage File", expanded=False):
-                if st.button("Delete File", type="primary", use_container_width=True):
+                if st.button("Delete File", type="primary", width="stretch"):
                     with st.spinner("Deleting file..."):
                         # Delete from MinIO
                         minio_success = minio_client.delete_file(selected_file_name)
@@ -102,7 +102,7 @@ with st.sidebar:
     
     # Advanced Options Expander
     with st.expander("⚙️ Advanced Options", expanded=False):
-        if st.button("Clear Dashboard", use_container_width=True):
+        if st.button("Clear Dashboard", width="stretch"):
             st.session_state.df = None
             st.session_state.messages = []
             # Clear specific report keys

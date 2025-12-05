@@ -178,7 +178,7 @@ def render_dashboard(df):
         if 'ItemCategory' in filtered_df.columns and not filtered_df.empty:
             fig = px.pie(filtered_df, values='TotalAmount', names='ItemCategory', hole=0.4, color_discrete_sequence=px.colors.qualitative.Pastel)
             fig.update_layout(margin=dict(t=0, b=0, l=0, r=0))
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
         else:
             st.info("No data available for the selected filters.")
             
@@ -189,7 +189,7 @@ def render_dashboard(df):
             monthly_spend['PODate'] = monthly_spend['PODate'].astype(str)
             fig = px.area(monthly_spend, x='PODate', y='TotalAmount', markers=True, line_shape='spline')
             fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), xaxis_title="Month", yaxis_title="Spend ($)")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
         else:
             st.info("No data available for the selected filters.")
 
@@ -198,7 +198,7 @@ def render_dashboard(df):
         top_suppliers = filtered_df.groupby('SupplierName')['TotalAmount'].sum().sort_values(ascending=False).head(10).reset_index()
         fig = px.bar(top_suppliers, x='SupplierName', y='TotalAmount', color='TotalAmount', color_continuous_scale='Viridis')
         fig.update_layout(xaxis_title="Supplier", yaxis_title="Total Spend ($)")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
 def render_supplier_intelligence(df):
     st.header("Supplier Intelligence")
@@ -238,7 +238,7 @@ def render_supplier_intelligence(df):
         fig.add_hline(y=supplier_metrics['QualityScore'].mean(), line_dash="dash", line_color="gray", annotation_text="Avg Quality")
         fig.add_vline(x=supplier_metrics['OnTimeDelivery%'].mean(), line_dash="dash", line_color="gray", annotation_text="Avg Delivery")
         
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     agent = SupplierIntelligenceAgent()
     
@@ -256,7 +256,7 @@ def render_supplier_intelligence(df):
             
     display_df = df[['SupplierName', 'SupplierRating', 'OnTimeDelivery%', 'QualityScore']].drop_duplicates().reset_index(drop=True)
     display_df.index = display_df.index + 1
-    st.dataframe(display_df, use_container_width=True)
+    st.dataframe(display_df, width="stretch")
 
 def render_spend_analysis(df):
     st.header("Spend Analysis")
