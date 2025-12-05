@@ -35,3 +35,13 @@ def init_llm():
     except Exception as e:
         logger.error(f"Failed to initialize LlamaIndex: {e}")
         raise e
+
+def get_llm():
+    """Get the configured LLM instance"""
+    init_llm()
+    return Settings.llm
+
+def get_embed_model():
+    """Get the configured embedding model instance"""
+    init_llm()
+    return Settings.embed_model

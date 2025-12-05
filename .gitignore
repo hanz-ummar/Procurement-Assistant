@@ -1,10 +1,91 @@
-# Python-generated files
+# Python
 __pycache__/
-*.py[oc]
+*.py[cod]
+*$py.class
+*.so
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
 wheels/
-*.egg-info
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Virtual environments
-.venv
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+junit/
+*.cover
+.hypothesis/
+coverage.xml
+*.log
+
+# Distribution / packaging
+.Python
+*.manifest
+*.spec
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Docker
+*.env.local
+docker-compose.override.yml
+
+# Project specific
+mcp_server_debug.log
+comprehensive_report_*.xlsx
+test-results*.xml
+
+# MinIO data (local development)
+minio_data/
+
+# ChromaDB data (local development)
+chroma_data/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+.cache/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Coverage reports
+.coverage.*

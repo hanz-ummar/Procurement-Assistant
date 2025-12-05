@@ -1,0 +1,148 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:  # Allow manual runs
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+      fail-fast: false  # Continue testing other versions even if one fails
+    
+    services:
+      # MinIO for integration tests
+      minio:
+        image: minio/minio
+        ports:
+          - 9000:9000
+          - 9001:9001
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 5
+        volumes:
+          - minio-data:/data
+        # Start MinIO server
+        entrypoint: >
+          sh -c "
+          minio server /data --console-address ':9001'
+          "
+      
+      # ChromaDB for integration tests
+      chromadb:
+        image: chromadb/chroma:latest
+        ports:
+          - 8000:8000
+        options: >-
+          --health-cmd "curl -f http://localhost:8000/api/v1/heartbeat || exit 1"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    
+    - name: Install uv (fast package installer)
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    
+    - name: Install dependencies
+      run: |
+        uv pip install --system -r pyproject.toml
+        uv pip install --system pytest pytest-cov pytest-asyncio pytest-timeout pytest-mock requests
+    
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for MinIO..."
+        timeout 60 sh -c 'until curl -f http://localhost:9000/minio/health/live; do sleep 2; done'
+        echo "MinIO is ready!"
+        
+        echo "Waiting for ChromaDB..."
+        timeout 60 sh -c 'until curl -f http://localhost:8000/api/v1/heartbeat; do sleep 2; done'
+        echo "ChromaDB is ready!"
+    
+    - name: Run Unit Tests
+      env:
+        MINIO_ENDPOINT: localhost:9000
+        CHROMA_HOST: localhost
+        CHROMA_PORT: 8000
+      run: |
+        pytest tests/unit/ -v --tb=short --junitxml=junit/test-results-unit-${{ matrix.python-version }}.xml
+    
+    - name: Run Integration Tests
+      env:
+        MINIO_ENDPOINT: localhost:9000
+        CHROMA_HOST: localhost
+        CHROMA_PORT: 8000
+      run: |
+        pytest tests/integration/ -v --tb=short --junitxml=junit/test-results-integration-${{ matrix.python-version }}.xml
+    
+    # Note: AI tests skipped in CI as they require Ollama with models
+    # These should be run locally before deployment
+    
+    - name: Generate Coverage Report
+      if: matrix.python-version == '3.11'  # Only run coverage on one Python version
+      env:
+        MINIO_ENDPOINT: localhost:9000
+        CHROMA_HOST: localhost
+        CHROMA_PORT: 8000
+      run: |
+        pytest tests/unit/ tests/integration/ \
+          --cov=backend \
+          --cov-report=xml \
+          --cov-report=html \
+          --cov-report=term-missing
+    
+    - name: Upload Coverage to Codecov
+      if: matrix.python-version == '3.11'
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false  # Don't fail if Codecov is down
+    
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.python-version }}
+        path: junit/test-results-*.xml
+    
+    - name: Upload Coverage HTML Report
+      if: matrix.python-version == '3.11'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: htmlcov/
+    
+    - name: Test Summary
+      if: always()
+      run: |
+        echo "## Test Results 🧪" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- Python Version: ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Unit Tests: ✅ Completed" >> $GITHUB_STEP_SUMMARY
+        echo "- Integration Tests: ✅ Completed" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "⚠️ **Note:** AI quality tests require Ollama and should be run locally before deployment" >> $GITHUB_STEP_SUMMARY

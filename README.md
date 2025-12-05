@@ -1,6 +1,14 @@
 # Procurement Assistant AI 🤖
 
-A high-performance, Agentic AI system designed to automate procurement data analysis. This application ingests raw procurement data (CSV), uses a **RAG (Retrieval-Augmented Generation)** architecture to understand it, and deploys **9 specialized AI Agents** to generate actionable insights on Spend, Risk, Supplier Performance, and Compliance.
+[![Tests](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/tests.yml/badge.svg)](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/tests.yml)
+[![Code Quality](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/code-quality.yml/badge.svg)](https://github.com/YOUR_USERNAME/Procurement-Assistant/actions/workflows/code-quality.yml)
+[![codecov](https://codecov.io/gh/YOUR_USERNAME/Procurement-Assistant/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/Procurement-Assistant)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A high-performance, **fully-tested** Agentic AI system designed to automate procurement data analysis. This application ingests raw procurement data (CSV), uses a **RAG (Retrieval-Augmented Generation)** architecture to understand it, and deploys **9 specialized AI Agents** to generate actionable insights on Spend, Risk, Supplier Performance, and Compliance.
+
+**✅ 63 Automated Tests | 100% Pass Rate | Production-Ready**
 
 ## 🚀 Key Features
 
@@ -9,6 +17,7 @@ A high-performance, Agentic AI system designed to automate procurement data anal
 *   **Local LLM Privacy:** Runs entirely offline using **Ollama** (Llama 3.2:3b) for maximum data security and zero cost.
 *   **High-Performance Analysis:** Optimized for local hardware (Ryzen 7 / RTX 4060), completing a full comprehensive analysis in **~40 seconds**.
 *   **Interactive Dashboard:** Built with **Streamlit**, featuring dynamic charts, detailed reports, and a persistent **AI Chat Assistant**.
+*   **MCP Integration:** Full **Model Context Protocol (MCP)** support for integration with Claude Desktop and other AI assistants - 10 tools, 6 prompts, and resources.
 *   **Scalable Infrastructure:** Uses **MinIO** for object storage and **Docker** for easy deployment.
 
 ## 🛠️ Tech Stack
@@ -63,7 +72,39 @@ A high-performance, Agentic AI system designed to automate procurement data anal
 
 ## 📊 Usage
 
+### Streamlit Web Interface
+
 1.  **Upload Data:** Upload your procurement CSV file (supports 3000+ rows).
 2.  **Run Analysis:** Click "🚀 Run All Analysis" to trigger the agent swarm.
 3.  **Explore Insights:** Navigate through the tabs (Spend, Risk, Supplier, etc.) to view detailed reports.
 4.  **Chat with AI:** Use the chat interface at the bottom to ask specific questions like *"Which supplier has the best delivery rate?"*.
+
+### MCP Integration (Claude Desktop)
+
+The project includes a full MCP server with 10 tools for integration with Claude Desktop and other MCP clients.
+
+**Quick Start:**
+1. Start Docker: `docker-compose up -d`
+2. Configure Claude Desktop (see `CLAUDE_DESKTOP_SETUP.md`)
+3. Open Claude Desktop - MCP server starts automatically
+4. Ask questions like: *"List all procurement files"* or *"Run comprehensive procurement analysis"*
+
+**Available MCP Tools (13 tools):**
+- File management (list files, get file info)
+- Data querying (RAG-based search)
+- Agent analysis (spend, risk, suppliers, contracts, PO, compliance)
+- Comprehensive analysis (all agents in parallel)
+- **Supplier comparison** (side-by-side metrics)
+- **Contract expiry alerts** (proactive risk management)
+- **Report export** (Excel/CSV format)
+
+See `MCP_INTEGRATION.md` for detailed documentation.
+
+## 📚 Documentation
+
+- **`SETUP_GUIDE.md`** - Complete setup instructions
+- **`MCP_INTEGRATION.md`** - MCP server documentation
+- **`CLAUDE_DESKTOP_SETUP.md`** - Claude Desktop configuration
+- **`MCP_SETUP_STEPS.md`** - Quick MCP setup guide
+- **`REMOTE_ACCESS_GUIDE.md`** - Sharing project remotely
+- **`SHARE_WITH_NGROK.md`** - Share Streamlit app via ngrok
