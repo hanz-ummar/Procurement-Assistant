@@ -38,7 +38,8 @@ st.markdown("""
     
     /* Sidebar Styling */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1e3a5f 0%, #0e1117 100%);
+        background-color: #f8f9fa;
+        border-right: 1px solid #e0e0e0;
         padding: 1rem 0.5rem;
     }
     
@@ -50,15 +51,15 @@ st.markdown("""
     [data-testid="stSidebar"] h1 {
         font-size: 1.5rem !important;
         font-weight: 700;
-        color: #ffffff;
+        color: #31333F !important;
         padding: 0.5rem 0;
         margin-bottom: 1rem;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 2px solid #e0e0e0;
     }
     
     [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
         font-size: 1.1rem !important;
-        color: #cccccc;
+        color: #555555 !important;
         margin-top: 1rem;
     }
     
